@@ -6,6 +6,9 @@ struct ContentView: View {
     @Query private var vendors: [Vendor]
     
     @State private var isAddSheetShown = false
+    @State private var newVendorName = ""
+    @State private var newVendorStreet = ""
+    @State private var newVendorCity = ""
     
     var body: some View {
         NavigationStack {
@@ -22,17 +25,6 @@ struct ContentView: View {
             }
             .listStyle(.plain)
             .padding()
-            .onAppear() {
-//                for i in 0..<5 {
-//                    let vendor = Vendor(name: "Vendor Number \(i)", street: "Street \(i)", city: "City \(i)")
-//                    let product1 = Product(name: "Product 01", vendor: vendor)
-//                    let product2 = Product(name: "Product 02", vendor: vendor)
-//                    let product3 = Product(name: "Product 03", vendor: vendor)
-//                    context.insert(product1)
-//                    context.insert(product2)
-//                    context.insert(product3)
-//                }
-            }
             .navigationTitle("Vendors")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -43,20 +35,74 @@ struct ContentView: View {
                     })
                 }
             }
-            .sheet(isPresented: $isAddSheetShown, content: {
-                Button(action: {
-                    let vendor = Vendor(name: "Vendor \(Date.timeIntervalSinceReferenceDate)",
-                                        street: "Street 01", city: "City 01")
-                    let product1 = Product(name: "Product 01", vendor: vendor)
-                    let product2 = Product(name: "Product 02", vendor: vendor)
-                    let product3 = Product(name: "Product 03", vendor: vendor)
-                    context.insert(product1)
-                    context.insert(product2)
-                    context.insert(product3)
-                    isAddSheetShown.toggle()
-                }, label: {
-                    Text("Insert Vendor")
-                })
+            .sheet(isPresented: $isAddSheetShown,
+                   content: {
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        isAddSheetShown.toggle()
+                    }) {
+                        Image(systemName: "xmark.circle")
+                            .font(.largeTitle)
+                    }.padding(.trailing, 15)
+                        .padding(.top, 15)
+                }
+                VStack(alignment: .leading, spacing: 20) {
+                    Section {
+                        TextField("Name", text: $newVendorName)
+                            .textFieldStyle(.roundedBorder)
+                        TextField("Street", text: $newVendorStreet)
+                            .textFieldStyle(.roundedBorder)
+                        TextField("City", text: $newVendorCity)
+                            .textFieldStyle(.roundedBorder)
+                    } header: {
+                        Text("New Vendor")
+                            .font(.title)
+                    } footer: {
+                        Button(action: {
+                            guard newVendorName.isEmpty == false else {
+                                return
+                            }
+                            
+                            let vendor = Vendor(
+                                name: newVendorName,
+                                street: newVendorStreet,
+                                city: newVendorCity
+                            )
+                            let product1 = Product(name: "Product 01", vendor: vendor)
+                            let product2 = Product(name: "Product 02", vendor: vendor)
+                            let product3 = Product(name: "Product 03", vendor: vendor)
+                            context.insert(product1)
+                            context.insert(product2)
+                            context.insert(product3)
+                            
+                            newVendorName = ""
+                            isAddSheetShown.toggle()
+                        },
+                               label: {
+                            Text("Insert")
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(.blue)
+                                .foregroundStyle(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }).padding(.top, 15)
+                        Button(action: {
+                            newVendorName = ""
+                            newVendorStreet = ""
+                            newVendorCity = ""
+                        }, label: {
+                            Text("Reset")
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(.red)
+                                .foregroundStyle(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                        })
+                    }
+                }.padding(.horizontal, 20)
+                    .padding(.vertical, 15)
+                Spacer()
             })
         }
     }
