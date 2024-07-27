@@ -1,12 +1,18 @@
 import SwiftUI
 
 struct VendorView: View {
-    var vendor: Vendor
+    @Bindable var vendor: Vendor
     
     var body: some View {
-        VStack {
-            Text(vendor.name)
-                .font(.title)
+        VStack(alignment: .leading) {
+            Text("Master data").font(.title)
+            TextField("Name", text: $vendor.name)
+                .textFieldStyle(.roundedBorder)
+            TextField("Street", text: $vendor.street)
+                .textFieldStyle(.roundedBorder)
+            TextField("City", text: $vendor.city)
+                .textFieldStyle(.roundedBorder)
+            Text("Products").font(.title2).padding(.top, 20)
             List {
                 ForEach(vendor.products, id: \.self) { product in
                     NavigationLink(destination: ProductView(product: product),
@@ -16,7 +22,8 @@ struct VendorView: View {
                 }
             }.listStyle(.plain)
         }.navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("Vendor Details")
+            .navigationTitle("Vendor details")
+            .padding()
     }
 }
 
