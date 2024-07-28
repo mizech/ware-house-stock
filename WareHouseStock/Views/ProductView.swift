@@ -17,7 +17,11 @@ struct ProductView: View {
             Spacer()
         }.padding()
             .onChange(of: updatedPrice, { oldValue, newValue in
-                product.price = Double(newValue) ?? 0.0
+                let tempNewPrice = Double(newValue)
+                
+                if let newPrice = tempNewPrice {
+                    product.price = newPrice
+                }
             })
             .onAppear() {
                 updatedPrice = String(product.price)
