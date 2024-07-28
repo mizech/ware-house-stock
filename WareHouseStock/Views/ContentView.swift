@@ -13,15 +13,20 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(vendors, id: \.self) { vendor in
-                    NavigationLink(destination: VendorView(vendor: vendor)) {
-                        Text(vendor.name)
-                    }
-                }.onDelete(perform: { indexSet in
-                    for index in indexSet {
-                        context.delete(vendors[index])
-                    }
-                })
+                if vendors.count > 0 {
+                    ForEach(vendors, id: \.self) { vendor in
+                        NavigationLink(destination: VendorView(vendor: vendor)) {
+                            Text(vendor.name)
+                        }
+                    }.onDelete(perform: { indexSet in
+                        for index in indexSet {
+                            context.delete(vendors[index])
+                        }
+                    })
+                } else {
+                    Text("No vendors available, currently.")
+                        .foregroundStyle(.gray)
+                }
             }
             .listStyle(.plain)
             .padding()

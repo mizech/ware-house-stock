@@ -22,7 +22,14 @@ struct VendorView: View {
             TextField("City", text: $vendor.city)
                 .textFieldStyle(.roundedBorder)
             Text("Products").font(.title2).padding(.top, 20)
-            ProductsListView(products: vendorProducts)
+            if vendorProducts.count > 0 {
+                ProductsListView(products: vendorProducts)
+            } else {
+                Text("No products available, currently.")
+                    .padding(.top, 5)
+                    .foregroundStyle(.gray)
+            }
+            Spacer()
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -79,9 +86,7 @@ struct VendorView: View {
                             print(error)
                         }
                         
-                        self.vendorProducts = self.allProducts.filter { product in
-                            product.vendor == vendor
-                        }
+                        updateVendorProducts()
                         newProductName = ""
                         newProductHint = ""
                         newProductPrice = ""
@@ -110,12 +115,12 @@ struct VendorView: View {
                 }
             }.padding(.horizontal, 20)
                 .padding(.vertical, 15)
-            Spacer()
+        })
+        .onChange(of: allProducts, { oldValue, newValue in
+            updateVendorProducts()
         })
         .onAppear() {
-            self.vendorProducts = self.allProducts.filter { product in
-                product.vendor == vendor
-            }
+            updateVendorProducts()
         }
         .onDisappear() {
             do {
@@ -128,6 +133,12 @@ struct VendorView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Vendor details")
         .padding()
+    }
+    
+    func updateVendorProducts() {
+        self.vendorProducts = self.allProducts.filter { product in
+            product.vendor == vendor
+        }
     }
 }
 
