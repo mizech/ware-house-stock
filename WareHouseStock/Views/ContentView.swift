@@ -3,7 +3,7 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var context
-    @Query private var vendors: [Vendor]
+    @Query(sort: \Vendor.name) private var vendors: [Vendor]
     
     @State private var isAddSheetShown = false
     @State private var newVendorName = ""
@@ -56,7 +56,7 @@ struct ContentView: View {
                         TextField("City", text: $newVendorCity)
                             .textFieldStyle(.roundedBorder)
                     } header: {
-                        Text("New Vendor")
+                        Text("Add Vendor")
                             .font(.title)
                     } footer: {
                         Button(action: {
@@ -69,14 +69,18 @@ struct ContentView: View {
                                 street: newVendorStreet,
                                 city: newVendorCity
                             )
-                            let product1 = Product(name: "Product 01", vendor: vendor)
-                            let product2 = Product(name: "Product 02", vendor: vendor)
-                            let product3 = Product(name: "Product 03", vendor: vendor)
-                            context.insert(product1)
-                            context.insert(product2)
-                            context.insert(product3)
+                            
+                            context.insert(vendor)
+                            do {
+                                try context.save()
+                            } catch {
+                                print(" -- Insert vendor failed -- ")
+                                print(error)
+                            }
                             
                             newVendorName = ""
+                            newVendorStreet = ""
+                            newVendorCity = ""
                             isAddSheetShown.toggle()
                         },
                                label: {
